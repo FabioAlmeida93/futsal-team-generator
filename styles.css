@@ -79,7 +79,7 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 390px;
+    width: 100%;
 }
 
 .teams ul li {

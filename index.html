@@ -3,45 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futsal Random Team Maker</title>
+    <title>team generator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     
-    <h1>Futsal Random Team Maker</h1>
-    <section class="selectores">
-        <section>
-            <input type="number" placeholder="numero de equipas">
-            <input type="number" placeholder="jogadores por equipa">
-        </section>
-        <section class="player_names">
-            <textarea name="nome dos jogadores divididos por vírgula" id="players" cols="30" rows="6" placeholder="nome dos jogadores separados por vírgulas"></textarea>
-        </section>
-        <section class="captains">
-            <p></p>
-        </section>
-        <section class="teams">
-            <ul>
-                <!-- <li>team 1
-                    <p></p>
-                </li>
-                <li>team 2
-                    <p></p>
-                </li>
-                <li>team 3
-                    <p></p>
-                </li> -->
-            </ul>
-        </section>
+   <section class="top-selection">
+    <section class="team-number">
+        <h2>Equipas</h2>
+        <input type="number" placeholder="2">
+    </section>
+    <section class="team-names">
+        <!-- <input type="text" placeholder="equipa 1">
+        <input type="text" placeholder="equipa 2"> -->
+    </section>
+   </section>
 
-        <section class="btn_choices">
-            <button class="erase">apagar seleção</button>
-            <button class="send">gerar equipa</button>
-        </section>
+   <section class="mid-selection">
+    <section class="player-number">
+        <h2>jogadores</h2>
+        <input type="number" placeholder="10">
+    </section>
+    <section class="player-names">
+        <!-- <div>
+            <input type="text" placeholder="jogador 1">
+            <input type="checkbox" name="jogador 1" id="jogador 1">
+        </div>
+        <div>
+            <input type="text" placeholder="jogador 1">
+            <input type="checkbox" name="jogador 1" id="jogador 1">
+        </div>
+        <div>
+            <input type="text" placeholder="jogador 1">
+            <input type="checkbox" name="jogador 1" id="jogador 1">
+        </div>
+        <div>
+            <input type="text" placeholder="jogador 1">
+            <input type="checkbox" name="jogador 1" id="jogador 1">
+        </div> -->
+    </section>
+   </section>
+
+   <section class="bottom-selection">
+    <section class="buttons">
+        <button id="generate-teams">Gerar equipas</button>
+        <button id="refresh"><img src="images/reload.png" alt="reload png"></button>
+        <button id="erase"><img src="images/close.png" alt="cross png"></button>
+    </section>
+   </section>
+
+   <section class="team-display">
+    <!-- <section class="teams-generated">
+        <h2>team 1</h2>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
     </section>
 
+    <section class="teams-generated">
+        <h2>team 2</h2>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+    </section>
+
+    <section class="teams-generated">
+        <h2>team 3</h2>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
+        <p>player name</p>
+    </section> -->
+   </section>
 
 
     <script src="script.js"></script>
+
 </body>
 </html>

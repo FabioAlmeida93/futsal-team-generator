@@ -1,142 +1,129 @@
-document.addEventListener("DOMContentLoaded", function() {
-    var sendButton = document.querySelector('.send');
-    var eraseButton = document.querySelector('.erase');
-    var playersTextarea = document.getElementById('players');
-    var captainsSection = document.querySelector('.captains');
-
-    sendButton.addEventListener('click', gerarEquipes);
-    eraseButton.addEventListener('click', apagarSelecao);
-    playersTextarea.addEventListener('input', createCaptainCheckboxes);
-
-    function gerarEquipes() {
-        var numEquipasInput = document.querySelector('.selectores input[type="number"]:nth-child(1)');
-        var jogadoresPorEquipaInput = document.querySelector('.selectores input[type="number"]:nth-child(2)');
-        var teamsList = document.querySelector('.teams ul');
-        
-        var numEquipas = parseInt(numEquipasInput.value);
-        var jogadoresPorEquipa = parseInt(jogadoresPorEquipaInput.value);
-        var playersArray = playersTextarea.value.split(',').map(function(item) {
-            return item.trim();
-        });
-
-        captainsSection.innerHTML = ''; // Limpar a seção de capitães
-        var captains = getSelectedCaptains();
-
-        renderTeams(numEquipas, teamsList); // Renderizar equipes imediatamente
-
-        setTimeout(function() {
-            distributePlayersWithDelay(playersArray, numEquipas, jogadoresPorEquipa, captains, teamsList, 1000); // Distribuir jogadores com intervalo de 1 segundo
-        }, 500); // Esperar meio segundo antes de começar a distribuir jogadores
-    }
-
-    function createCaptainCheckboxes() {
-        var playersArray = playersTextarea.value.split(',').map(function(item) {
-            return item.trim();
-        });
-
-        captainsSection.innerHTML = ''; // Limpar a seção de capitães
-
-        playersArray.forEach(function(player) {
-            var captainCheckbox = document.createElement('input');
-            captainCheckbox.type = 'checkbox';
-            captainCheckbox.value = player;
-            var label = document.createElement('label');
-            label.textContent = player;
-            label.appendChild(captainCheckbox);
-            captainsSection.appendChild(label);
-        });
-    }
-
-    function getSelectedCaptains() {
-        var selectedCaptains = [];
-        var captainCheckboxes = document.querySelectorAll('.captains input[type="checkbox"]');
-        captainCheckboxes.forEach(function(checkbox) {
-            if (checkbox.checked) {
-                selectedCaptains.push(checkbox.value);
-            }
-        });
-        return selectedCaptains;
-    }
-
-    function distributePlayersWithDelay(playersArray, numTeams, playersPerTeam, captains, teamsList, delay) {
-        var shuffledPlayers = shuffleArray(playersArray.filter(player => !captains.includes(player)));
-        var currentPlayerIndex = 0;
-        var teams = [];
-        for (var i = 0; i < numTeams; i++) {
-            teams.push([]);
-        }
-
-        captains.forEach(function(captain) {
-            var teamIndex = currentPlayerIndex % numTeams;
-            var team = teams[teamIndex];
-            team.push(captain);
-            currentPlayerIndex++;
-        });
-
-        var distributeNextPlayer = function() {
-            var teamIndex = currentPlayerIndex % numTeams;
-            var team = teams[teamIndex];
-            if (currentPlayerIndex < playersArray.length) {
-                var currentPlayer = shuffledPlayers[currentPlayerIndex];
-                team.push(currentPlayer);
-                currentPlayerIndex++;
-                renderTeam(team, teamIndex + 1, teamsList);
-            }
-
-            if (currentPlayerIndex < playersArray.length) {
-                setTimeout(distributeNextPlayer, delay);
-            }
-        };
-
-        distributeNextPlayer();
-    }
-
-    function renderTeams(numTeams, teamsList) {
-        for (var i = 1; i <= numTeams; i++) {
-            var teamElement = createTeamElement(i);
-            teamsList.appendChild(teamElement);
-        }
-    }
-
-    function renderTeam(team, teamNumber, teamsList) {
-        var teamElement = teamsList.children[teamNumber - 1]; // Equipe correspondente ao índice na lista
-        teamElement.innerHTML = ''; // Limpar conteúdo anterior da equipe
-        
-        var teamTitle = document.createElement('h3');
-        teamTitle.textContent = 'Equipa ' + teamNumber + ':';
-        teamElement.appendChild(teamTitle);
-        
-        team.forEach(function(player) {
-            var playerParagraph = document.createElement('p');
-            playerParagraph.textContent = player;
-            teamElement.appendChild(playerParagraph);
-        });
-    }
-
-    function createTeamElement(teamNumber) {
-        var team = document.createElement('li');
-        return team;
-    }
-
-    function apagarSelecao() {
-        var inputs = document.querySelectorAll('.selectores input[type="number"]');
-        var textarea = document.getElementById('players');
-        var teamsList = document.querySelector('.teams ul');
-
-        inputs.forEach(function(input) {
-            input.value = '';
-        });
-
-        textarea.value = '';
-        captainsSection.innerHTML = '';
-        teamsList.innerHTML = '';
-    }
-
+document.addEventListener('DOMContentLoaded', function() {
     function shuffleArray(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Swap
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Troca elementos
         }
-        return array;
     }
+
+    const teamNumberInput = document.querySelector('.team-number input');
+    const playerNumberInput = document.querySelector('.player-number input');
+    const generateTeamsButton = document.getElementById('generate-teams');
+    const refreshButton = document.getElementById('refresh');
+    const eraseButton = document.getElementById('erase');
+    const teamNamesContainer = document.querySelector('.team-names');
+    const playerNamesContainer = document.querySelector('.player-names');
+    const teamDisplay = document.querySelector('.team-display');
+
+    teamNumberInput.addEventListener('input', function() {
+        const numberOfTeams = parseInt(this.value, 10);
+        teamNamesContainer.innerHTML = '';
+        for (let i = 0; i < numberOfTeams; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `Equipa ${i + 1}`;
+            teamNamesContainer.appendChild(input);
+        }
+    });
+
+    playerNumberInput.addEventListener('input', function() {
+        const numberOfPlayers = parseInt(this.value, 10);
+        playerNamesContainer.innerHTML = '';
+        for (let i = 0; i < numberOfPlayers; i++) {
+            const div = document.createElement('div');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `Jogador ${i + 1}`;
+            div.appendChild(input);
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = `Jogador ${i + 1}`;
+            div.appendChild(checkbox);
+
+            playerNamesContainer.appendChild(div);
+        }
+    });
+
+    generateTeamsButton.addEventListener('click', function() {
+        const numberOfTeams = parseInt(teamNumberInput.value, 10);
+        if (!numberOfTeams) {
+            alert("Por favor, insira um número válido de equipes.");
+            return;
+        }
+
+        const playerDivs = Array.from(playerNamesContainer.querySelectorAll('div'));
+        let players = playerDivs.map(div => ({
+            name: div.querySelector('input[type="text"]').value,
+            avoidTeam: div.querySelector('input[type="checkbox"]').checked
+        }));
+
+        // Separar jogadores marcados dos não marcados
+        let markedPlayers = players.filter(player => player.avoidTeam);
+        let unmarkedPlayers = players.filter(player => !player.avoidTeam);
+
+        if (markedPlayers.length > numberOfTeams) {
+            alert("Não é possível alocar todos os jogadores selecionados em equipes diferentes com o número de equipes disponíveis.");
+            return;
+        }
+
+        shuffleArray(unmarkedPlayers);
+        shuffleArray(markedPlayers);
+
+        // Prepara as equipes
+        const teams = Array.from({ length: numberOfTeams }, () => []);
+
+        // Distribui os jogadores marcados, um por equipe
+        markedPlayers.forEach((player, index) => {
+            teams[index].push(player);
+        });
+
+        // Distribui os jogadores não marcados
+        unmarkedPlayers.forEach(player => {
+            teams.sort((a, b) => a.length - b.length); // Equipes com menos jogadores primeiro
+            teams[0].push(player);
+        });
+
+        // Renderização das equipes na interface
+        teamDisplay.innerHTML = '';
+        teams.forEach((team, index) => {
+            const teamSection = document.createElement('section');
+            teamSection.className = 'teams-generated';
+
+            const teamName = document.createElement('h2');
+            teamName.textContent = `Equipa ${index + 1}`;
+            teamSection.appendChild(teamName);
+
+            team.forEach(player => {
+                const playerElement = document.createElement('div');
+                const playerName = document.createElement('p');
+                playerName.textContent = player.name;
+                playerElement.appendChild(playerName);
+
+                const picture = document.createElement('picture');
+                const img = document.createElement('img');
+                let imageIndex = (index % 5) + 1; // Assume-se que existem 3 imagens diferentes de camisetas
+                img.src = `images/team-${imageIndex}-shirt.png`;
+                img.alt = `Camisola da Equipa ${index + 1}`;
+                picture.appendChild(img);
+                playerElement.appendChild(picture);
+
+                teamSection.appendChild(playerElement);
+            });
+
+            teamDisplay.appendChild(teamSection);
+        });
+    });
+
+    refreshButton.addEventListener('click', function() {
+        generateTeamsButton.click();
+    });
+
+    eraseButton.addEventListener('click', function() {
+        teamNamesContainer.innerHTML = '';
+        playerNamesContainer.innerHTML = '';
+        teamDisplay.innerHTML = '';
+        teamNumberInput.value = '';
+        playerNumberInput.value = '';
+    });
 });

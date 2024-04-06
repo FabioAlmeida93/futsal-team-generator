@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
 
 
 * {
@@ -8,99 +8,167 @@
 }
 
 body {
-    font-family: 'Poppins';
+    display: grid;
+    place-content: start center;
+    /* margin: 10px; */
     width: 100vw;
     height: 100vh;
-    margin: 20px 0;
-}
-
-
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
 p {
+    font-size: 16px;
     color: #333;
+    font-weight: 500;
+    margin: 2px 0;
 }
 
-h1 {
-    text-align: center;
-    font-size: 28px;
+a {
+    text-decoration: none;
+    color: #fff;
 }
 
-ul {
-    list-style: none;
+
+picture img {
+    width: 40px;
+    object-fit: cover;
+    object-position: center;
 }
 
-textarea {
-    resize: none;
+img {
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
-input {
-    border: 1px solid #333;
-    padding: 5px;
+button img {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    object-position: center;
+}
+
+input[type="checkbox"] {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+
+.top-selection, .mid-selection, .bottom-selection {
+    margin: 20px 0;
 }
 
 ::placeholder {
-    font-family: 'Poppins';
-    padding: 5px 2px;
+    padding: 15px;
 }
 
-.selectores {
+.team-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+/* .team-names {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 10px 0;
-}
-
-.player_names {
-    margin: 10px 0;
-}
-
-.captains {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(100px, 1fr));
     gap: 5px;
+} */
+
+.player-names, .team-names {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 15px;
 }
 
-.captains input {
-    margin: 0 5px;
+.player-names input {
+    width: 140px;
+    height: 40px;
+    border: 1px solid #333
 }
 
-.captains p {
-    margin: 0 3px;
+.team-names input {
+    width: 180px;
+    height: 40px;
+    border: 1px solid #333
 }
 
-.teams ul {
+/* .player-names div {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    flex-wrap: wrap;
+    gap: 5px;
+} */
+
+.player-names div {
+    display: flex;
+    justify-content: space-between; /* Ajusta para space-around ou center, se necessário */
+    align-items: center;
+    gap: 5px;
 }
 
-.teams ul li {
-    padding: 20px;
-    width: 150px;
-    color: lightsalmon;
+.player-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
-.btn_choices button {
-    margin: 20px 15px;
-    padding: 5px;
+.team-number input, .player-number input {
+    width: 50px;
+    height: 30px;
+    border: 1px solid #333;
+    border-radius: 15px;
+    background-color: #85B79D;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#generate-teams {
+    width: 180px;
+    height: 50px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 20px;
     border: none;
-    box-shadow: 2px 3px 6px rgba(3, 3, 3, .5);
-    font-family: 'Poppins';
-    font-weight: 600;
+    background-color: #85B79D;
+    margin-right: 20px;
 }
 
-.send {
-    background-color: lightseagreen;
+#refresh, #erase {
+    width: 50px;
+    height: 50px;
+    background-color: #F87666;
+    border: none;
+    margin: 0 5px;
 }
 
-.erase {
-    background-color: rgb(173, 53, 53);
+/* .teams-generated {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+} */
+
+.teams-generated input {
+    width: 120px;
+    height: 30px;
+    border: 1px solid #333;
+}
+
+.team-display {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 15px;
 }

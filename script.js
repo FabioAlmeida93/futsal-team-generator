@@ -2,14 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCvW7BPr6VfMmCZvIxHhjA3Jac8o3PXXko",
-    authDomain: "fut-sorteios-beta.firebaseapp.com",
-    databaseURL: "https://fut-sorteios-beta-default-rtdb.firebaseio.com",
-    projectId: "fut-sorteios-beta",
-    storageBucket: "fut-sorteios-beta.firebasestorage.app",
-    messagingSenderId: "218663543341",
-    appId: "1:218663543341:web:593d1c0da17b0f9c268ea4",
-    measurementId: "G-50TY6BH9FP"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -67,12 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (players.length === 1) {
             teams.A.push(player);
             teamValues.A += playerValue;
-            updateTeams(player);
-            return;
-        }
-
-        if (["goncalo", "delfim"].includes(normalizedPlayer) && teams.A.length === 5 && teams.B.length === 5) {
-            replacePlayerForGoalkeeper(normalizedPlayer);
+            updateTeams();
+            savePlayers();
             return;
         }
 
@@ -91,22 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
         
-        if (["pedro", "rafael", "buxo"].includes(normalizedPlayer)) {
-            let teamWithPlayer = { A: false, B: false };
-            ["pedro", "rafael", "buxo"].forEach(lowPlayer => {
-                if (teams.A.some(p => normalizeName(p) === lowPlayer)) teamWithPlayer.A = true;
-                if (teams.B.some(p => normalizeName(p) === lowPlayer)) teamWithPlayer.B = true;
-            });
-            
-            if (teamWithPlayer.A && teamWithPlayer.B) {
-                teams.Banco.push(player);
-                updateTeams(player);
-                return;
-            }
-            
-            availableTeams = teamWithPlayer.A ? ["B"] : ["A"];
-        }
-
         if (availableTeams.length > 0) {
             let bestTeam = availableTeams.reduce((a, b) => 
                 (teamValues[a] < teamValues[b] ? a : b)
@@ -117,11 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
             teams.Banco.push(player);
         }
         
-        updateTeams(player);
+        updateTeams();
         savePlayers();
     }
     
-    function updateTeams(newPlayer) {
+    function updateTeams() {
         let teamContainer = document.querySelector(".team_container");
         if (!teamContainer) {
             teamContainer = document.createElement("section");
@@ -147,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
             teams[team].forEach(player => {
                 let playerKit = document.createElement("section");
                 playerKit.classList.add("player_kit");
-                if (player === newPlayer) playerKit.classList.add("highlight");
                 let jerseyColor = team === "Banco" ? "black" : teamColors[team];
                 playerKit.innerHTML = `
                     <figure><img src="images/jersey_${jerseyColor}.png" alt="equipamento ${jerseyColor}"></figure>

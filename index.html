@@ -3,101 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>team generator</title>
+    <title>Futsal Sextas</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     
-   <section class="top-selection">
-    <section class="team-number">
-        <h2>Equipas</h2>
-        <input type="number" placeholder="2">
-    </section>
-    <section class="team-names">
-        <!-- <input type="text" placeholder="equipa 1">
-        <input type="text" placeholder="equipa 2"> -->
-    </section>
-   </section>
+    <header>
+        <h1>Futsal Sextas</h1>
+        <h3>Gerador de equipas</h3>
+    </header>
 
-   <section class="mid-selection">
-    <section class="player-number">
-        <h2>jogadores</h2>
-        <input type="number" placeholder="10">
-    </section>
-    <section class="player-names">
-        <!-- <div>
-            <input type="text" placeholder="jogador 1">
-            <input type="checkbox" name="jogador 1" id="jogador 1">
-        </div>
-        <div>
-            <input type="text" placeholder="jogador 1">
-            <input type="checkbox" name="jogador 1" id="jogador 1">
-        </div>
-        <div>
-            <input type="text" placeholder="jogador 1">
-            <input type="checkbox" name="jogador 1" id="jogador 1">
-        </div>
-        <div>
-            <input type="text" placeholder="jogador 1">
-            <input type="checkbox" name="jogador 1" id="jogador 1">
-        </div> -->
-    </section>
-   </section>
-
-   <section class="bottom-selection">
-    <section class="buttons">
-        <button id="generate-teams">Gerar equipas</button>
-        <button id="refresh"><img src="images/reload.png" alt="reload png"></button>
-        <button id="erase"><img src="images/close.png" alt="cross png"></button>
-    </section>
-   </section>
-
-   <section class="team-display">
-    <!-- <section class="teams-generated">
-        <h2>team 1</h2>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
+    <section class="big_image">
+        <figure><img src="images/thumb_A.jpeg" alt="pitch image background"></figure>
+        <p class="field_name">Linhó - sexta 20 dezembro - 21h - 22:30h</p>
     </section>
 
-    <section class="teams-generated">
-        <h2>team 2</h2>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
+    <section class="main_action">
+        <button>participar no draft</button>
+        <input type="number" id="quantity">
     </section>
 
-    <section class="teams-generated">
-        <h2>team 3</h2>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-        <picture><img src="images/team-1-shirt.png" alt="team shirt"></picture>
-        <p>player name</p>
-    </section> -->
-   </section>
+    <section class="wrapper">
+        <section class="team_name">
+            <h3>Equipa A</h3>
+        </section>
+        <section class="team_container">
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_red.png" alt="player jersey with color red"></figure>
+                <p class="player_name">João</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_red.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Rúben</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_red.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Gonçalo</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_red.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Fábio</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_red.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Daniel</p>
+            </section>
+        </section>
+
+        <section class="team_name">
+            <h3>Equipa B</h3>
+        </section>
+        <section class="team_container">
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_green.png" alt="player jersey with color red"></figure>
+                <p class="player_name">João</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_green.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Rúben</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_green.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Gonçalo</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_green.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Fábio</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_green.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Daniel</p>
+            </section>
+        </section>
+
+        <section class="team_name">
+            <h3>Equipa C</h3>
+        </section>
+        <section class="team_container">
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_purple.png" alt="player jersey with color red"></figure>
+                <p class="player_name">João</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_purple.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Rúben</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_purple.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Gonçalo</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_purple.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Fábio</p>
+            </section>
+            <section class="player_jersey_name">
+                <figure><img src="/images/jersey_purple.png" alt="player jersey with color red"></figure>
+                <p class="player_name">Daniel</p>
+            </section>
+        </section>
+    </section>
+
+    <section class="options">
+        <button class="erase">Apagar draft</button>
+        <button class="repeat"><img src="images/repeat.png" alt=""></button>
+    </section>
 
 
     <script src="script.js"></script>
-
+    
 </body>
 </html>

@@ -1,3 +1,21 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCvW7BPr6VfMmCZvIxHhjA3Jac8o3PXXko",
+    authDomain: "fut-sorteios-beta.firebaseapp.com",
+    databaseURL: "https://fut-sorteios-beta-default-rtdb.firebaseio.com",
+    projectId: "fut-sorteios-beta",
+    storageBucket: "fut-sorteios-beta.firebasestorage.app",
+    messagingSenderId: "218663543341",
+    appId: "1:218663543341:web:593d1c0da17b0f9c268ea4",
+    measurementId: "G-50TY6BH9FP"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dbRef = ref(db, "players");
+
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.querySelector(".participate input");
     const draftButton = document.querySelector(".draft");
@@ -39,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         players.push(playerName);
         assignPlayer(playerName);
         input.value = "";
+        savePlayers();
     });
     
     function assignPlayer(player) {
@@ -99,18 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         updateTeams(player);
-    }
-    
-    function replacePlayerForGoalkeeper(goalkeeper) {
-        let teamToJoin = teams.A.some(p => normalizeName(p) === "goncalo") ? "B" : "A";
-        let teamToLeave = teamToJoin === "A" ? "B" : "A";
-        
-        let randomPlayer = teams[teamToJoin][Math.floor(Math.random() * teams[teamToJoin].length)];
-        teams[teamToJoin] = teams[teamToJoin].filter(p => p !== randomPlayer);
-        teams.Banco.push(randomPlayer);
-        
-        teams[teamToJoin].push(goalkeeper);
-        updateTeams(goalkeeper);
+        savePlayers();
     }
     
     function updateTeams(newPlayer) {
@@ -126,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (teams[team].length === 0) return;
             if (!teamColors[team] && team !== "Banco") {
                 let availableColors = jerseys.filter(c => !Object.values(teamColors).includes(c));
-                teamColors[team] = availableColors.length > 0 ? availableColors[0] : "gray";
+                teamColors[team] = availableColors[Math.floor(Math.random() * availableColors.length)];
             }
             
             let section = document.createElement("section");
@@ -150,4 +158,15 @@ document.addEventListener("DOMContentLoaded", () => {
             teamContainer.appendChild(playerContainer);
         });
     }
+    
+    function savePlayers() {
+        set(dbRef, teams);
+    }
+    
+    onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+            teams = snapshot.val();
+            updateTeams();
+        }
+    });
 });

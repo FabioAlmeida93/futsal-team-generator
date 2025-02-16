@@ -72,6 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        if (normalizedPlayer === "goncalo" || normalizedPlayer === "delfim") {
+            handleGoalkeeperAssignment(normalizedPlayer, player);
+            return;
+        }
+
         let availableTeams = [];
         if (teams.A.length < 5) availableTeams.push("A");
         if (teams.B.length < 5) availableTeams.push("B");
@@ -97,6 +102,22 @@ document.addEventListener("DOMContentLoaded", () => {
             teams.Banco.push(player);
         }
         
+        updateTeams();
+        savePlayers();
+    }
+    
+    function handleGoalkeeperAssignment(goalkeeper, player) {
+        const oppositeTeam = teams.A.some(p => normalizeName(p) === "goncalo") ? "B" : "A";
+        const chosenTeam = teams[oppositeTeam].length < 5 ? oppositeTeam : "Banco";
+        
+        if (chosenTeam !== "Banco") {
+            let removedPlayer = teams[chosenTeam].splice(Math.floor(Math.random() * teams[chosenTeam].length), 1)[0];
+            teams.Banco.push(removedPlayer);
+            teams[chosenTeam].push(player);
+        } else {
+            teams.Banco.push(player);
+        }
+
         updateTeams();
         savePlayers();
     }

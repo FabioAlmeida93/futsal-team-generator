@@ -72,8 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (normalizedPlayer === "goncalo" || normalizedPlayer === "delfim") {
-            handleGoalkeeperAssignment(normalizedPlayer, player);
+        if (["goncalo", "delfim"].includes(normalizedPlayer)) {
+            assignGoalkeeper(player, normalizedPlayer);
             return;
         }
 
@@ -106,20 +106,15 @@ document.addEventListener("DOMContentLoaded", () => {
         savePlayers();
     }
     
-    function handleGoalkeeperAssignment(goalkeeper, player) {
-        const oppositeTeam = teams.A.some(p => normalizeName(p) === "goncalo") ? "B" : "A";
-        const chosenTeam = teams[oppositeTeam].length < 5 ? oppositeTeam : "Banco";
-        
-        if (chosenTeam !== "Banco") {
-            let removedPlayer = teams[chosenTeam].splice(Math.floor(Math.random() * teams[chosenTeam].length), 1)[0];
-            teams.Banco.push(removedPlayer);
-            teams[chosenTeam].push(player);
-        } else {
-            teams.Banco.push(player);
-        }
+    function assignGoalkeeper(player, normalizedPlayer) {
+        const targetTeam = teams.A.length >= 5 ? "B" : "A";
+        const otherTeam = targetTeam === "A" ? "B" : "A";
 
-        updateTeams();
-        savePlayers();
+        if (teams[targetTeam].length >= 5) {
+            const removedPlayer = teams[targetTeam].splice(Math.floor(Math.random() * teams[targetTeam].length), 1)[0];
+            teams.Banco.push(removedPlayer);
+        }
+        teams[targetTeam].push(player);
     }
     
     function updateTeams() {
@@ -174,4 +169,5 @@ document.addEventListener("DOMContentLoaded", () => {
             updateTeams();
         }
     });
+    
 });

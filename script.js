@@ -2,14 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCvW7BPr6VfMmCZvIxHhjA3Jac8o3PXXko",
-    authDomain: "fut-sorteios-beta.firebaseapp.com",
-    databaseURL: "https://fut-sorteios-beta-default-rtdb.firebaseio.com",
-    projectId: "fut-sorteios-beta",
-    storageBucket: "fut-sorteios-beta.firebasestorage.app",
-    messagingSenderId: "218663543341",
-    appId: "1:218663543341:web:593d1c0da17b0f9c268ea4",
-    measurementId: "G-50TY6BH9FP"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -72,11 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (["goncalo", "delfim"].includes(normalizedPlayer)) {
-            assignGoalkeeper(player, normalizedPlayer);
-            return;
-        }
-
         let availableTeams = [];
         if (teams.A.length < 5) availableTeams.push("A");
         if (teams.B.length < 5) availableTeams.push("B");
@@ -104,17 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         updateTeams();
         savePlayers();
-    }
-    
-    function assignGoalkeeper(player, normalizedPlayer) {
-        const targetTeam = teams.A.length >= 5 ? "B" : "A";
-        const otherTeam = targetTeam === "A" ? "B" : "A";
-
-        if (teams[targetTeam].length >= 5) {
-            const removedPlayer = teams[targetTeam].splice(Math.floor(Math.random() * teams[targetTeam].length), 1)[0];
-            teams.Banco.push(removedPlayer);
-        }
-        teams[targetTeam].push(player);
     }
     
     function updateTeams() {
@@ -169,5 +152,4 @@ document.addEventListener("DOMContentLoaded", () => {
             updateTeams();
         }
     });
-    
 });

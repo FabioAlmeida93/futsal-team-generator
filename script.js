@@ -1,23 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, push } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
-// Configuração do Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyCvW7BPr6VfMmCZvIxHhjA3Jac8o3PXXko",
-    authDomain: "fut-sorteios-beta.firebaseapp.com",
-    databaseURL: "https://fut-sorteios-beta-default-rtdb.firebaseio.com",
-    projectId: "fut-sorteios-beta",
-    storageBucket: "fut-sorteios-beta.firebasestorage.app",
-    messagingSenderId: "218663543341",
-    appId: "1:218663543341:web:593d1c0da17b0f9c268ea4",
-    measurementId: "G-50TY6BH9FP"
-  };
-
-// Inicializa o Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const playersRef = ref(db, "players");
-
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.querySelector(".participate input");
     const draftButton = document.querySelector(".draft");
@@ -56,32 +36,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        savePlayerToFirebase(playerName);
+        players.push(playerName);
+        assignPlayer(playerName);
         input.value = "";
     });
-    
-    function savePlayerToFirebase(player) {
-        push(playersRef, player);
-    }
-    
-    onValue(playersRef, (snapshot) => {
-        if (snapshot.exists()) {
-            players = Object.values(snapshot.val());
-            assignAllPlayers();
-        }
-    });
-    
-    function assignAllPlayers() {
-        teams = { A: [], B: [], Banco: [] };
-        teamValues = { A: 0, B: 0 };
-        players.forEach(player => assignPlayer(player));
-    }
     
     function assignPlayer(player) {
         const normalizedPlayer = normalizeName(player);
         const playerValue = playerValues[normalizedPlayer] || 5; 
         
-        if (players.indexOf(player) === 0) {
+        if (players.length === 1) {
             teams.A.push(player);
             teamValues.A += playerValue;
             updateTeams(player);
@@ -137,6 +101,18 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTeams(player);
     }
     
+    function replacePlayerForGoalkeeper(goalkeeper) {
+        let teamToJoin = teams.A.some(p => normalizeName(p) === "goncalo") ? "B" : "A";
+        let teamToLeave = teamToJoin === "A" ? "B" : "A";
+        
+        let randomPlayer = teams[teamToJoin][Math.floor(Math.random() * teams[teamToJoin].length)];
+        teams[teamToJoin] = teams[teamToJoin].filter(p => p !== randomPlayer);
+        teams.Banco.push(randomPlayer);
+        
+        teams[teamToJoin].push(goalkeeper);
+        updateTeams(goalkeeper);
+    }
+    
     function updateTeams(newPlayer) {
         let teamContainer = document.querySelector(".team_container");
         if (!teamContainer) {
@@ -150,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (teams[team].length === 0) return;
             if (!teamColors[team] && team !== "Banco") {
                 let availableColors = jerseys.filter(c => !Object.values(teamColors).includes(c));
-                teamColors[team] = availableColors[Math.floor(Math.random() * availableColors.length)];
+                teamColors[team] = availableColors.length > 0 ? availableColors[0] : "gray";
             }
             
             let section = document.createElement("section");

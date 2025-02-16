@@ -2,13 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyCvW7BPr6VfMmCZvIxHhjA3Jac8o3PXXko",
+    authDomain: "fut-sorteios-beta.firebaseapp.com",
+    databaseURL: "https://fut-sorteios-beta-default-rtdb.firebaseio.com",
+    projectId: "fut-sorteios-beta",
+    storageBucket: "fut-sorteios-beta.firebasestorage.app",
+    messagingSenderId: "218663543341",
+    appId: "1:218663543341:web:593d1c0da17b0f9c268ea4",
+    measurementId: "G-50TY6BH9FP"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -145,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (snapshot.exists()) {
             const data = snapshot.val();
             
-            // Garantindo que todas as equipes existam para evitar erros
             teams.A = data.A || [];
             teams.B = data.B || [];
             teams.Banco = data.Banco || [];

@@ -143,7 +143,13 @@ document.addEventListener("DOMContentLoaded", () => {
     
     onValue(dbRef, (snapshot) => {
         if (snapshot.exists()) {
-            teams = snapshot.val();
+            const data = snapshot.val();
+            
+            // Garantindo que todas as equipes existam para evitar erros
+            teams.A = data.A || [];
+            teams.B = data.B || [];
+            teams.Banco = data.Banco || [];
+            
             updateTeams();
         }
     });

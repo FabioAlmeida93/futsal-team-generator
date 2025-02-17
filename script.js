@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     function assignPlayer(player) {
         const normalizedPlayer = normalizeName(player);
-        const playerValue = playerValues[normalizedPlayer] || 5; 
-        
+        const playerValue = playerValues[normalizedPlayer] || 5;
+
         if (players.length === 1) {
             teams.A.push(player);
             teamValues.A += playerValue;
@@ -71,7 +71,36 @@ document.addEventListener("DOMContentLoaded", () => {
             savePlayers();
             return;
         }
-
+    
+        if (["buxo", "pedro", "rafael"].includes(normalizedPlayer)) {
+            if (teams.A.length < 5 && !teams.A.some(p => ["buxo", "pedro", "rafael"].includes(normalizeName(p)))) {
+                teams.A.push(player);
+            } else if (teams.B.length < 5 && !teams.B.some(p => ["buxo", "pedro", "rafael"].includes(normalizeName(p)))) {
+                teams.B.push(player);
+            } else {
+                teams.Banco.push(player);
+            }
+            updateTeams();
+            savePlayers();
+            return;
+        }
+    
+        if (["goncalo", "delfim"].includes(normalizedPlayer)) {
+            const otherKeeper = normalizedPlayer === "goncalo" ? "delfim" : "goncalo";
+            const keeperTeam = teams.A.some(p => normalizeName(p) === otherKeeper) ? "B" : "A";
+    
+            if (teams.A.length >= 5 && teams.B.length >= 5) {
+                const removedPlayer = teams[keeperTeam].splice(Math.floor(Math.random() * teams[keeperTeam].length), 1)[0];
+                teams.Banco.push(removedPlayer);
+                teams[keeperTeam].push(player);
+            } else {
+                teams[keeperTeam].push(player);
+            }
+            updateTeams();
+            savePlayers();
+            return;
+        }
+    
         let availableTeams = [];
         if (teams.A.length < 5) availableTeams.push("A");
         if (teams.B.length < 5) availableTeams.push("B");
@@ -86,30 +115,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         });
-        
-        if (["rafael", "buxo", "pedro"].includes(normalizedPlayer)) {
-            if (!teams.A.some(p => ["rafael", "buxo", "pedro"].includes(normalizeName(p)))) {
-                teams.A.push(player);
-                teamValues.A += playerValue;
-            } else if (!teams.B.some(p => ["rafael", "buxo", "pedro"].includes(normalizeName(p)))) {
-                teams.B.push(player);
-                teamValues.B += playerValue;
-            } else {
-                teams.Banco.push(player);
-            }
-        } else if (availableTeams.length > 0) {
-            let bestTeam = availableTeams.reduce((a, b) => 
-                (teamValues[a] < teamValues[b] ? a : b)
+    
+        if (availableTeams.length > 0) {
+            let bestTeam = availableTeams.reduce((a, b) =>
+                teamValues[a] < teamValues[b] ? a : b
             );
             teams[bestTeam].push(player);
             teamValues[bestTeam] += playerValue;
         } else {
             teams.Banco.push(player);
         }
-        
+    
         updateTeams();
         savePlayers();
-    }
+    }            
     
     function updateTeams() {
         let teamContainer = document.querySelector(".team_container");

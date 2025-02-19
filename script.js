@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCvW7BPr6VfMmCZvIxHhjA3Jac8o3PXXko",
@@ -20,24 +20,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.querySelector(".participate input");
     const draftButton = document.querySelector(".draft");
     const body = document.querySelector("body");
-    
+
     let players = [];
     let teams = { A: [], B: [], Suplente: [] };
     let teamValues = { A: 0, B: 0 };
     let teamColors = {};
     const jerseys = ["red", "blue", "green", "yellow"];
-    
+
     const playerValues = {
         "joao": 10, "andre": 10, "goncalo": 10, "delfim": 10,
         "fabio": 7.5, "ruben": 7.5, "claudio": 7.5, "busquets": 7.5, "daniel": 7.5, "postiga": 7.5, "marcelo": 7.5,
         "pedro": 2.5, "rafael": 2.5, "buxo": 2.5, "pedro soares": 2.5, "pedro s": 2.5,
     };
-    
+
     const restrictions = [
         ["joao", "andre"],
         ["goncalo", "delfim"]
     ];
-    
+
     function normalizeName(name) {
         return name
             .toLowerCase()
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function correctPlayerName(inputName) {
-        let minDistance = 2; 
+        let minDistance = 2;
         let correctedName = inputName;
         Object.keys(playerValues).forEach(validName => {
             let distance = levenshteinDistance(normalizeName(inputName), normalizeName(validName));
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         return correctedName;
     }
-    
+
     draftButton.addEventListener("click", () => {
         let playerName = input.value.trim();
         if (!playerName) return;
@@ -92,82 +92,107 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        function assignPlayer(player) {
+            const normalizedPlayer = normalizeName(player);
+            const playerValue = playerValues[normalizedPlayer] || 5;
+        
+            if (players.length === 1) {
+                teams.A.push(player);
+                teamValues.A += playerValue;
+                updateTeams();
+                savePlayers();
+                return;
+            }
+        
+            if (["buxo", "pedro", "pedro soares", "pedro s", "rafael"].includes(normalizedPlayer)) {
+                if (teams.A.length < 5 && !teams.A.some(p => ["buxo", "pedro", "pedro soares", "pedro s", "rafael"].includes(normalizeName(p)))) {
+                    teams.A.push(player);
+                } else if (teams.B.length < 5 && !teams.B.some(p => ["buxo", "pedro", "pedro soares", "pedro s", "rafael"].includes(normalizeName(p)))) {
+                    teams.B.push(player);
+                } else {
+                    teams.Suplente.push(player);
+                }
+                updateTeams();
+                savePlayers();
+                return;
+            }
+        
+            if (["goncalo", "delfim"].includes(normalizedPlayer)) {
+                const otherKeeper = normalizedPlayer === "goncalo" ? "delfim" : "goncalo";
+                const keeperTeam = teams.A.some(p => normalizeName(p) === otherKeeper) ? "B" : "A";
+        
+                if (teams.A.length >= 5 && teams.B.length >= 5) {
+                    const removedPlayer = teams[keeperTeam].splice(Math.floor(Math.random() * teams[keeperTeam].length), 1)[0];
+                    teams.Suplente.push(removedPlayer);
+                    teams[keeperTeam].push(player);
+                } else {
+                    teams[keeperTeam].push(player);
+                }
+                updateTeams();
+                savePlayers();
+                return;
+            }
+        
+            let availableTeams = [];
+            if (teams.A.length < 5) availableTeams.push("A");
+            if (teams.B.length < 5) availableTeams.push("B");
+        
+            restrictions.forEach(pair => {
+                if (pair.includes(normalizedPlayer)) {
+                    let restrictedPlayer = pair.find(name => name !== normalizedPlayer);
+                    if (teams.A.some(p => normalizeName(p) === restrictedPlayer)) {
+                        availableTeams = availableTeams.filter(t => t !== "A");
+                    } else if (teams.B.some(p => normalizeName(p) === restrictedPlayer)) {
+                        availableTeams = availableTeams.filter(t => t !== "B");
+                    }
+                }
+            });
+        
+            if (availableTeams.length > 0) {
+                let bestTeam = availableTeams.reduce((a, b) =>
+                    teamValues[a] < teamValues[b] ? a : b
+                );
+                teams[bestTeam].push(player);
+                teamValues[bestTeam] += playerValue;
+            } else {
+                teams.Suplente.push(player);
+            }
+        
+            updateTeams();
+            savePlayers();
+        }        
+
         players.push(playerName);
         assignPlayer(playerName);
         input.value = "";
         savePlayers();
     });
-    
-    function assignPlayer(player) {
-        const normalizedPlayer = normalizeName(player);
-        const playerValue = playerValues[normalizedPlayer] || 5;
 
-        if (players.length === 1) {
-            teams.A.push(player);
-            teamValues.A += playerValue;
-            updateTeams();
-            savePlayers();
-            return;
-        }
-    
-        if (["buxo", "pedro", "pedro soares", "pedro s", "rafael"].includes(normalizedPlayer)) {
-            if (teams.A.length < 5 && !teams.A.some(p => ["buxo", "pedro", "pedro soares", "pedro s", "rafael"].includes(normalizeName(p)))) {
-                teams.A.push(player);
-            } else if (teams.B.length < 5 && !teams.B.some(p => ["buxo", "pedro", "pedro soares", "pedro s", "rafael"].includes(normalizeName(p)))) {
-                teams.B.push(player);
-            } else {
-                teams.Suplente.push(player);
+    function savePlayers() {
+        runTransaction(dbRef, (currentData) => {
+            if (!currentData) {
+                return teams;
             }
-            updateTeams();
-            savePlayers();
-            return;
-        }
-    
-        if (["goncalo", "delfim"].includes(normalizedPlayer)) {
-            const otherKeeper = normalizedPlayer === "goncalo" ? "delfim" : "goncalo";
-            const keeperTeam = teams.A.some(p => normalizeName(p) === otherKeeper) ? "B" : "A";
-    
-            if (teams.A.length >= 5 && teams.B.length >= 5) {
-                const removedPlayer = teams[keeperTeam].splice(Math.floor(Math.random() * teams[keeperTeam].length), 1)[0];
-                teams.Suplente.push(removedPlayer);
-                teams[keeperTeam].push(player);
-            } else {
-                teams[keeperTeam].push(player);
-            }
-            updateTeams();
-            savePlayers();
-            return;
-        }
-    
-        let availableTeams = [];
-        if (teams.A.length < 5) availableTeams.push("A");
-        if (teams.B.length < 5) availableTeams.push("B");
-
-        restrictions.forEach(pair => {
-            if (pair.includes(normalizedPlayer)) {
-                let restrictedPlayer = pair.find(name => name !== normalizedPlayer);
-                if (teams.A.some(p => normalizeName(p) === restrictedPlayer)) {
-                    availableTeams = availableTeams.filter(t => t !== "A");
-                } else if (teams.B.some(p => normalizeName(p) === restrictedPlayer)) {
-                    availableTeams = availableTeams.filter(t => t !== "B");
-                }
-            }
+            return {
+                A: teams.A,
+                B: teams.B,
+                Suplente: teams.Suplente
+            };
         });
-    
-        if (availableTeams.length > 0) {
-            let bestTeam = availableTeams.reduce((a, b) =>
-                teamValues[a] < teamValues[b] ? a : b
-            );
-            teams[bestTeam].push(player);
-            teamValues[bestTeam] += playerValue;
-        } else {
-            teams.Suplente.push(player);
+    }
+
+    onValue(dbRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+
+            teams.A = data.A || [];
+            teams.B = data.B || [];
+            teams.Suplente = data.Suplente || [];
+
+            updateTeams();
         }
-    
-        updateTeams();
-        savePlayers();
-    }            
-    
+    });
+
     function updateTeams() {
         let teamContainer = document.querySelector(".team_container");
         if (!teamContainer) {
@@ -176,19 +201,19 @@ document.addEventListener("DOMContentLoaded", () => {
             body.insertBefore(teamContainer, document.querySelector("footer"));
         }
         teamContainer.innerHTML = "";
-        
+
         ["A", "B", "Suplente"].forEach(team => {
             if (teams[team].length === 0) return;
             if (!teamColors[team] && team !== "Suplente") {
                 let availableColors = jerseys.filter(c => !Object.values(teamColors).includes(c));
                 teamColors[team] = availableColors[Math.floor(Math.random() * availableColors.length)];
             }
-            
+
             let section = document.createElement("section");
             section.classList.add("team_name");
             section.innerHTML = `<h1>Equipa ${team}</h1>`;
             teamContainer.appendChild(section);
-            
+
             let playerContainer = document.createElement("section");
             playerContainer.classList.add("player_container");
             teams[team].forEach(player => {
@@ -204,20 +229,4 @@ document.addEventListener("DOMContentLoaded", () => {
             teamContainer.appendChild(playerContainer);
         });
     }
-    
-    function savePlayers() {
-        set(dbRef, teams);
-    }
-    
-    onValue(dbRef, (snapshot) => {
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            
-            teams.A = data.A || [];
-            teams.B = data.B || [];
-            teams.Suplente = data.Suplente || [];
-            
-            updateTeams();
-        }
-    });
 });
